@@ -1,0 +1,44 @@
+name: CI
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build-v2:
+    strategy:
+      matrix:
+        runner-os: [windows-latest, ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.runner-os }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: github/gh-gei
+          
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Build
+        run: dotnet publish src/ado2gh/ado2gh.csproj -c Release -o dist/win-x64/ -r win-x64 -p:PublishSingleFile=true -p:PublishTrimmed=true --self-contained true /p:DebugType=None /p:IncludeNativeLibrariesForSelfExtract=true
+        
+  build-v3-0-0:
+    strategy:
+      matrix:
+        runner-os: [windows-latest, ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.runner-os }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: github/gh-gei
+          
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3.0.0
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Build
+        run: dotnet publish src/ado2gh/ado2gh.csproj -c Release -o dist/win-x64/ -r win-x64 -p:PublishSingleFile=true -p:PublishTrimmed=true --self-contained true /p:DebugType=None /p:IncludeNativeLibrariesForSelfExtract=true
